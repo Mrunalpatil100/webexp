@@ -7,49 +7,71 @@ const Student = require("./models/Student");
 
 const app = express();
 
-app.use(cors());
+// CORS configuration
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 app.use(express.json());
 
+// Test route
 app.get("/", (req, res) => {
   res.send("MERN Backend is Running");
 });
 
+// Add student
 app.post("/api/students", async (req, res) => {
   try {
     const { username, rollno } = req.body;
 
     if (!username || !rollno) {
       return res.status(400).json({
-        message: "Username and Roll Number are required"
+        message: "Username and Roll Number are required",
       });
     }
 
-    const student = new Student({ username, rollno });
+    const student = new Student({
+      username,
+      rollno,
+    });
 
     await student.save();
 
     res.status(201).json(student);
   } catch (error) {
+    console.error("POST ERROR:", error);
+
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 });
 
+// Get all students
 app.get("/api/students", async (req, res) => {
   try {
     const students = await Student.find();
+
     res.json(students);
   } catch (error) {
+    console.error("GET ERROR:", error);
+
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 });
 
+// Render provides the PORT through environment variables
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI)
+// Connect MongoDB and start server
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB Connected");
 
