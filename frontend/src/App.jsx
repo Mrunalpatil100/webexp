@@ -19,7 +19,13 @@ function App() {
 
       setStudents(response.data);
     } catch (error) {
-      console.error(error);
+      console.error("GET ERROR:", error);
+
+      setMessage(
+        error.response?.data?.message ||
+        error.message ||
+        "Unable to fetch students"
+      );
     }
   };
 
@@ -51,16 +57,23 @@ function App() {
 
       fetchStudents();
     } catch (error) {
-      console.error(error);
-      setMessage("Unable to add student");
+      console.error("POST ERROR:", error);
+
+      setMessage(
+        error.response?.data?.message ||
+        error.message ||
+        "Unable to add student"
+      );
     }
   };
 
   return (
     <div className="container">
+
       <h1>MERN Student Application</h1>
 
       <form onSubmit={addStudent}>
+
         <label>Username</label>
 
         <input
@@ -82,6 +95,7 @@ function App() {
         <button type="submit">
           Add Student
         </button>
+
       </form>
 
       <p>{message}</p>
@@ -89,6 +103,7 @@ function App() {
       <h2>Student Records</h2>
 
       <table>
+
         <thead>
           <tr>
             <th>Username</th>
@@ -97,14 +112,18 @@ function App() {
         </thead>
 
         <tbody>
+
           {students.map((student) => (
             <tr key={student._id}>
               <td>{student.username}</td>
               <td>{student.rollno}</td>
             </tr>
           ))}
+
         </tbody>
+
       </table>
+
     </div>
   );
 }
